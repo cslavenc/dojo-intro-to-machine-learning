@@ -6,7 +6,10 @@ Created on Fri Oct 18 07:43:36 2024
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
+
 from sklearn.datasets import load_iris
+from sklearn.metrics import confusion_matrix, accuracy_score, roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
@@ -17,6 +20,8 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 
 
+### TODO : add links to the docs
+### TODO : add a way to load different datasets from kaggle§
 if __name__ == '__main__':
     # Load iris dataset
     iris = load_iris()
@@ -80,10 +85,44 @@ if __name__ == '__main__':
     nn_model = Sequential([
         Dense(64, activation='relu', input_shape=(4,), kernel_initializer='he_normal'),
         Dense(32, activation='relu', kernel_initializer='he_normal'),
-        Dense(3, activation='softmax', kernel_initializer='glorot_uniform')
+        Dense(3, activation='softmax')
     ])
     nn_model.compile(optimizer=Adam(learning_rate=0.001), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     nn_model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
-    y_pred_nn = nn_model.predict(X_test)
-    print("Neural Network Accuracy:", np.mean(np.argmax(y_pred_nn, axis=1) == y_test))
+    y_pred_nn = np.argmax(nn_model.predict(X_test), axis=1)
+    print("Neural Network Accuracy:", np.mean(y_pred_nn == y_test))
     
+    
+    # Create confusion matrices
+    plt.figure(figsize=(12, 6))
+    preds = [y_pred_svm, y_pred_rf, y_pred_xgb, y_pred_nb, y_pred_nn]
+    models = ['SVM', 'Random Forest', 'XGBoost', 'Naive Bayes', 'Neural Network']
+    accuracies = [accuracy_score(y_test, pred) for pred in preds]
+    
+    for i, pred in enumerate(preds):
+        cm = confusion_matrix(y_test, pred)
+        plt.subplot(1, len(models), i+1)
+        plt.imshow(cm, interpolation='nearest')
+        plt.title(f'Confusion Matrix - {i}')
+        plt.colorbar()
+        plt.xlabel('Predicted labels')
+        plt.ylabel('True labels')
+
+    plt.tight_layout()
+    plt.show()
+
+    # Bar plot comparing accuracy
+    plt.figure(figsize=(12, 6))
+    x = np.arange(len(preds))
+    width = 0.8 / len(preds)
+    
+    for i, model in enumerate(models):
+        y = accuracies[i]
+        plt.bar(x[i], y, width, label=model, yerr=np.std(pred), alpha=0.7)
+    
+    plt.xticks(x, models, rotation=45)
+    plt.ylabel('Accuracy')
+    plt.title('Model Comparison - Accuracy')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
