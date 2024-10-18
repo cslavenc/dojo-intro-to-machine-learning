@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.datasets import load_iris
-from sklearn.metrics import confusion_matrix, accuracy_score, roc_curve, auc
+from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
@@ -21,7 +21,7 @@ from tensorflow.keras.optimizers import Adam
 
 
 ### TODO : add links to the docs
-### TODO : add a way to load different datasets from kaggle§
+### TODO : add a way to load different datasets from kaggle
 if __name__ == '__main__':
     # Load iris dataset
     iris = load_iris()
