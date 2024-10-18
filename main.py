@@ -20,7 +20,6 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 
 
-### TODO : add links to the docs
 ### TODO : add a way to load different datasets from kaggle
 if __name__ == '__main__':
     # Load iris dataset
@@ -31,6 +30,7 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     # Support Vector Machine (SVM): Finds hyperplane maximizing margin between classes
+    # https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
     # Parameters explanation for SVM:
     # - kernel='rbf': Uses Radial Basis Function kernel
     # - C=1: Regularization parameter controlling misclassification error
@@ -42,10 +42,10 @@ if __name__ == '__main__':
 
 
     # Random Forest Classifier: Ensemble method combining multiple decision trees
+    # https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
     # Parameters explanation for Random Forests:
     # - n_estimators=100: Number of trees in the forest
     # - random_state=42: Ensures reproducibility of tree initialization
-
     rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
     rf_model.fit(X_train, y_train)
     y_pred_rf = rf_model.predict(X_test)
@@ -53,6 +53,7 @@ if __name__ == '__main__':
     
     
     # Extreme Gradient Boosting (XGBoost): Gradient boosting framework with internal regularization
+    # https://xgboost.readthedocs.io/en/latest/
     # Parameters explanation for XGBoost:
     # - max_depth: Maximum depth of individual trees
     # - learning_rate: Step size at each iteration during training
@@ -66,6 +67,7 @@ if __name__ == '__main__':
     
 
     # Gaussian Naive Bayes: Probabilistic classifier assuming multivariate Gaussian distribution
+    # https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.GaussianNB.html
     # Parameters explanation for Naive Bayes:
     # - var_smoothing: Smoothing factor to prevent perfect fit on noise in training data
     nb_model = GaussianNB()
@@ -75,6 +77,7 @@ if __name__ == '__main__':
     
 
     # Multi-layer Perceptron (MLP): Feedforward neural network with multiple layers of interconnected nodes
+    # https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense
     # Parameters explanation for Neural Network:
     # - Dense(64): First hidden layer with 64 neurons
     # - activation='relu': Rectified Linear Unit activation function
