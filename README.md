@@ -8,6 +8,7 @@ try to tune and play with them.
 
 ## dependencies
 
-- sklear
-- keras
-- xgboost
+- pandas: dataframe manipulation
+- sklearn: classic machine learning methods
+- keras: easy high level API for neural networks
+- xgboost: special extreme gradient boost library
