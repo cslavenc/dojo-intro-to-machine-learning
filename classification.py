@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn.datasets import load_iris
 # classical machine learning dependencies
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
