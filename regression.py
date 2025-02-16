@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 
 from sklearn.datasets import load_iris
 # classical machine learning dependencies
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
-from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBRegressor
 # helpful functions
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 # neural network dependencies
 # from tensorflow.keras.models import Sequential
@@ -32,17 +32,25 @@ if __name__ == '__main__':
     
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
+
+    # Linear Regression model
+    lm = LinearRegression()
+    lm.fit(X_train, y_train)
+    y_pred_lm = lm.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred_lm)
+    print("Mean Squared Error (MSE) for LM: " + str(mse))
+
+
     # Support Vector Machine (SVM): Finds hyperplane maximizing margin between classes
     # https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
     # Parameters explanation for SVM:
     # - kernel='rbf': Uses Radial Basis Function kernel
     # - C=1: Regularization parameter controlling misclassification error
     # - gamma='scale': Kernel coefficient automatically scaled based on feature range
-    svm_model = SVC(kernel='rbf', C=1, gamma='scale')
-    svm_model.fit(X_train, y_train)
-    y_pred_svm = svm_model.predict(X_test)
-    print("SVM Accuracy:", svm_model.score(X_test, y_test))
+    svr_model = SVR(kernel='rbf', C=1, gamma='scale')
+    svr_model.fit(X_train, y_train)
+    y_pred_svr = svr_model.predict(X_test)
+    print("SVR Accuracy:", svr_model.score(X_test, y_test))
 
 
     # Random Forest Classifier: Ensemble method combining multiple decision trees
@@ -50,10 +58,10 @@ if __name__ == '__main__':
     # Parameters explanation for Random Forests:
     # - n_estimators=100: Number of trees in the forest
     # - random_state=42: Ensures reproducibility of tree initialization
-    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
     rf_model.fit(X_train, y_train)
     y_pred_rf = rf_model.predict(X_test)
-    print("Random Forest Accuracy:", rf_model.score(X_test, y_test))
+    print("Random Forest Accuray:", rf_model.score(X_test, y_test))
     
     
     # Extreme Gradient Boosting (XGBoost): Gradient boosting framework with internal regularization
@@ -64,20 +72,11 @@ if __name__ == '__main__':
     # - n_estimators: Number of boosted trees
     # - subsample: Fraction of samples to be used for fitting individual trees
     # - colsample_bytree: Fraction of columns to be randomly sampled for each tree
-    xgb_model = XGBClassifier()
+    xgb_model = XGBRegressor()
     xgb_model.fit(X_train, y_train)
     y_pred_xgb = xgb_model.predict(X_test)
     print("XGBoost Accuracy:", xgb_model.score(X_test, y_test))
     
-
-    # Gaussian Naive Bayes: Probabilistic classifier assuming multivariate Gaussian distribution
-    # https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.GaussianNB.html
-    # Parameters explanation for Naive Bayes:
-    # - var_smoothing: Smoothing factor to prevent perfect fit on noise in training data
-    nb_model = GaussianNB()
-    nb_model.fit(X_train, y_train)
-    y_pred_nb = nb_model.predict(X_test)
-    print("Naive Bayes Accuracy:", nb_model.score(X_test, y_test))
     
 
     # Multi-layer Perceptron (MLP): Feedforward neural network with multiple layers of interconnected nodes
@@ -92,7 +91,7 @@ if __name__ == '__main__':
     # nn_model = Sequential([
     #     Dense(64, activation='relu', input_shape=(4,), kernel_initializer='he_normal'),
     #     Dense(32, activation='relu', kernel_initializer='he_normal'),
-    #     Dense(3, activation='softmax')
+    #     Dense(1)
     # ])
     
     # # Scale features since neural networks use data between [0,1], sometimes [-1,1] depending on the actication function
@@ -100,31 +99,19 @@ if __name__ == '__main__':
     # X_scaled = scaler.fit_transform(X)
     # X_scaled_test = scaler.transform(X_test)
     
-    # nn_model.compile(optimizer=Adam(learning_rate=0.001), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    # nn_model.compile(optimizer=Adam(learning_rate=0.001), loss='mean_squared_error', metrics=['mean_absolute_error'])
     # nn_model.fit(X_scaled, y_train, epochs=50, batch_size=32, validation_data=(X_scaled_test, y_test))
-    # y_pred_nn = np.argmax(nn_model.predict(X_scaled_test), axis=1)
+    # y_pred_nn = nn_model.predict(X_scaled_test)
     # print("Neural Network Accuracy:", np.mean(y_pred_nn == y_test))
     
     
     # Create confusion matrices
     plt.figure(figsize=(12, 6))
-    preds = [y_pred_svm, y_pred_rf, y_pred_xgb, y_pred_nb]
-    models = ['SVM', 'Random Forest', 'XGBoost', 'Naive Bayes']
-    accuracies = [accuracy_score(y_test, pred) for pred in preds]
-    
-    for i, pred in enumerate(preds):
-        cm = confusion_matrix(y_test, pred)
-        plt.subplot(1, len(models), i+1)
-        plt.imshow(cm, interpolation='nearest')
-        plt.title(f'Confusion Matrix - {i}')
-        plt.colorbar()
-        plt.xlabel('Predicted labels')
-        plt.ylabel('True labels')
+    preds = [y_pred_lm, y_pred_svr, y_pred_rf, y_pred_xgb]
+    models = ['Linear Model', 'SVR', 'Random Forest', 'XGBoost']
+    accuracies = [mean_squared_error(y_test, pred) for pred in preds]
 
-    plt.tight_layout()
-    plt.show()
-
-    # Bar plot comparing accuracy
+    # Bar plot comparing performance
     plt.figure(figsize=(12, 6))
     x = np.arange(len(preds))
     width = 0.8 / len(preds)
@@ -135,7 +122,7 @@ if __name__ == '__main__':
     
     plt.xticks(x, models, rotation=45)
     plt.ylabel('Accuracy')
-    plt.title('Model Comparison - Accuracy')
+    plt.title('Model Comparison - MSE')
     plt.legend()
     plt.tight_layout()
     plt.show()
