@@ -119,7 +119,8 @@ if __name__ == '__main__':
     
     # # Scale features since neural networks use data between [0,1], sometimes [-1,1] depending on the actication function
     # scaler = StandardScaler()
-    # X_scaled = scaler.fit_transform(X)
+    # scaler = scaler.fit(np.concatenate((X_train, X_test)))
+    # X_scaled = scaler.transform(X_train)
     # X_scaled_test = scaler.transform(X_test)
     
     # nn_model.compile(optimizer=Adam(learning_rate=0.001), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
