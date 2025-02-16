@@ -5,10 +5,11 @@ Created on Fri Oct 18 07:43:36 2024
 @author: slaven.cvijetic
 """
 
+import os
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn.datasets import load_iris
 # classical machine learning dependencies
 from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
@@ -16,7 +17,7 @@ from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
 # helpful functions
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix, accuracy_score, mean_squared_error
+from sklearn.metrics import confusion_matrix, accuracy_score, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 # neural network dependencies
 # from tensorflow.keras.models import Sequential
@@ -24,21 +25,44 @@ from sklearn.model_selection import train_test_split
 # from tensorflow.keras.optimizers import Adam
 
 
+def prepareSalaryDataset():
+    df = pd.read_csv(os.getcwd()+"\\data\\regression\\salary.csv")
+    X = df["YearsExperience"].to_numpy().reshape(-1,1)
+    y = df["Salary"].to_numpy().reshape(-1,1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
+
+
+def prepareHousePriceDataset():
+    df = pd.read_csv(os.getcwd()+"\\data\\regression\\house_price.csv")
+    X = df.iloc[:,:-1].to_numpy()
+    y = df["House_Price"].to_numpy()
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
+
+
+def prepareEnergyDataset():
+    train = pd.read_csv(os.getcwd()+"\\data\\regression\\train_energy_data.csv")
+    test = pd.read_csv(os.getcwd()+"\\data\\regression\\test_energy_data.csv")
+    X_train = pd.get_dummies(train.iloc[:,:-1]).to_numpy()
+    y_train = train.iloc[:,-1].to_numpy()
+    X_test = pd.get_dummies(test.iloc[:,:-1]).to_numpy()
+    y_test = test.iloc[:,-1].to_numpy()
+    return X_train, X_test, y_train, y_test
+
+
 ### TODO : add a way to load different datasets from kaggle
 if __name__ == '__main__':
-    # Load iris dataset
-    iris = load_iris()
-    X, y = iris.data, iris.target
-    
-    # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # load dataset
+    X_train, X_test, y_train, y_test = prepareEnergyDataset()
+
 
     # Linear Regression model
     lm = LinearRegression()
     lm.fit(X_train, y_train)
     y_pred_lm = lm.predict(X_test)
-    mse = mean_squared_error(y_test, y_pred_lm)
-    print("Mean Squared Error (MSE) for LM: " + str(mse))
+    r2 = r2_score(y_test, y_pred_lm)
+    print("R^2 Score for LM: " + str(r2))
 
 
     # Support Vector Machine (SVM): Finds hyperplane maximizing margin between classes
@@ -109,7 +133,7 @@ if __name__ == '__main__':
     plt.figure(figsize=(12, 6))
     preds = [y_pred_lm, y_pred_svr, y_pred_rf, y_pred_xgb]
     models = ['Linear Model', 'SVR', 'Random Forest', 'XGBoost']
-    accuracies = [mean_squared_error(y_test, pred) for pred in preds]
+    accuracies = [r2_score(y_test, pred) for pred in preds]
 
     # Bar plot comparing performance
     plt.figure(figsize=(12, 6))
