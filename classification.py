@@ -53,7 +53,7 @@ def prepareMaintenanceDataset():
 ### TODO : add a way to load different datasets from kaggle
 if __name__ == '__main__':
     # load dataset
-    X_train, X_test, y_train, y_test = preparePasswordDataset()
+    X_train, X_test, y_train, y_test = prepareMaintenanceDataset()
     
     # Support Vector Machine (SVM): Finds hyperplane maximizing margin between classes
     # https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
