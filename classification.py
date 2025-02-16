@@ -5,7 +5,9 @@ Created on Fri Oct 18 07:43:36 2024
 @author: slaven.cvijetic
 """
 
+import os
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn.datasets import load_iris
@@ -15,7 +17,7 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.naive_bayes import GaussianNB
 # helpful functions
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.model_selection import train_test_split
 # neural network dependencies
@@ -24,14 +26,34 @@ from sklearn.model_selection import train_test_split
 # from tensorflow.keras.optimizers import Adam
 
 
+def preparePasswordDataset():
+    # This is a good candidate for further feature engineering
+    train = pd.read_csv(os.getcwd()+"\\data\\classification\\passwords.csv")
+    test = pd.read_csv(os.getcwd()+"\\data\\classification\\passwords_test.csv")
+    # Add a length column to calculate the length of the text
+    train["length"] = train["password"].apply(lambda x : len(x))
+    test["length"] = test["password"].apply(lambda x : len(x))
+    X_train = train["length"].to_numpy().reshape(-1, 1)
+    y_train = train["strength"].to_numpy()
+    X_test = test["length"].to_numpy().reshape(-1, 1)
+    y_test = test["strength"].to_numpy()
+    return X_train, X_test, y_train, y_test
+
+
+def prepareMaintenanceDataset():
+    df = pd.read_csv(os.getcwd()+"\\data\\classification\\maintenance.csv")
+    labelEncoder = LabelEncoder()
+    X = pd.get_dummies(df.iloc[:,:-1]).to_numpy()
+    y = labelEncoder.fit_transform(df.iloc[:,-1])
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
+
+
+
 ### TODO : add a way to load different datasets from kaggle
 if __name__ == '__main__':
-    # Load iris dataset
-    iris = load_iris()
-    X, y = iris.data, iris.target
-    
-    # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # load dataset
+    X_train, X_test, y_train, y_test = preparePasswordDataset()
     
     # Support Vector Machine (SVM): Finds hyperplane maximizing margin between classes
     # https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
