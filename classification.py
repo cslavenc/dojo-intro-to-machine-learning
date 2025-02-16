@@ -50,7 +50,6 @@ def prepareMaintenanceDataset():
 
 
 
-### TODO : add a way to load different datasets from kaggle
 if __name__ == '__main__':
     # load dataset
     X_train, X_test, y_train, y_test = prepareMaintenanceDataset()
