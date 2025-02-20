@@ -57,6 +57,7 @@ if __name__ == '__main__':
 
 
     # Linear Regression model
+    # https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html#sklearn.linear_model.LinearRegression
     lm = LinearRegression()
     lm.fit(X_train, y_train)
     y_pred_lm = lm.predict(X_test)
@@ -65,7 +66,7 @@ if __name__ == '__main__':
 
 
     # Support Vector Machine (SVM): Finds hyperplane maximizing margin between classes
-    # https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
+    # https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVR.html
     # Parameters explanation for SVM:
     # - kernel='rbf': Uses Radial Basis Function kernel
     # - C=1: Regularization parameter controlling misclassification error
@@ -77,7 +78,7 @@ if __name__ == '__main__':
 
 
     # Random Forest Classifier: Ensemble method combining multiple decision trees
-    # https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
+    # https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html
     # Parameters explanation for Random Forests:
     # - n_estimators=100: Number of trees in the forest
     # - random_state=42: Ensures reproducibility of tree initialization
